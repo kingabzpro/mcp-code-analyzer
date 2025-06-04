@@ -114,7 +114,7 @@ def analyze_code_anthropic(code: str) -> dict:
             system=SYSTEM_MESSAGES["anthropic"],
             tools=tools,
             tool_choice={"type": "tool", "name": "code_scores"},
-            max_tokens=64,
+            max_tokens=128,  # ← give Claude breathing room
             temperature=0,
         )
 
@@ -189,29 +189,47 @@ def analyze_code_openai(code: str) -> Dict[str, Any]:
 
 
 def create_code_score(code: str) -> Dict[str, Any]:
+    
     if not code:
-        return DEFAULT_SCORES.copy()
+        return {
+            "anthropic": DEFAULT_SCORES.copy(),
+            "mistral": DEFAULT_SCORES.copy(),
+            "openai": DEFAULT_SCORES.copy(),
+            "average": DEFAULT_SCORES.copy(),
+        }
 
-    scores_list = [
-        analyze_code_anthropic(code),
-        analyze_code_mistral(code),
-        analyze_code_openai(code),
+    # Run all three providers once
+    anthropic_scores = analyze_code_anthropic(code)
+    mistral_scores = analyze_code_mistral(code)
+    openai_scores = analyze_code_openai(code)
+
+    # Filter out any failures before averaging
+    valid = [
+        s for s in (anthropic_scores, mistral_scores, openai_scores) if "error" not in s
     ]
-    valid = [s for s in scores_list if "error" not in s]
 
-    if not valid:
-        result = DEFAULT_SCORES.copy()
-        result["error"] = "All API providers failed"
-        return result
+    # Compute averages (returns zeros if every provider failed)
+    average = (
+        {
+            "vulnerability_score": sum(s["vulnerability_score"] for s in valid)
+            // len(valid),
+            "style_score": sum(s["style_score"] for s in valid) // len(valid),
+            "quality_score": sum(s["quality_score"] for s in valid) // len(valid),
+        }
+        if valid
+        else {**DEFAULT_SCORES, "error": "All API providers failed"}
+    )
 
-    # Average
-    averaged = {
-        "vulnerability_score": sum(s["vulnerability_score"] for s in valid)
-        // len(valid),
-        "style_score": sum(s["style_score"] for s in valid) // len(valid),
-        "quality_score": sum(s["quality_score"] for s in valid) // len(valid),
+    # Assemble unified payload
+    result: Dict[str, Any] = {
+        "anthropic": anthropic_scores,
+        "mistral": mistral_scores,
+        "openai": openai_scores,
+        "average": average,
     }
-    return averaged
+
+
+    return result
 
 
 # ------------------------------------------------------------------ #
