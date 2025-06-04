@@ -31,7 +31,7 @@ SYSTEM_MESSAGES = {
 }
 
 MODELS = {
-    "anthropic": "claude-opus-4-20250514",  # adjust if you use a different Claude-3 variant
+    "anthropic": "claude-sonnet-4-20250514",
     "mistral": "mistral-medium-2505",
     "openai": "gpt-4.1-2025-04-14",
 }
