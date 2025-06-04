@@ -1,43 +1,10 @@
 import gradio as gr
 from dotenv import load_dotenv
 
+from code_analyzer.analysis import create_code_analysis_report
+from code_analyzer.scoring import create_code_score
+
 load_dotenv()
-
-
-# Function to create a code analysis report
-def create_code_analysis_report(code: str) -> str:
-    """
-    Placeholder function to generate a code analysis report.
-
-    Args:
-        code (str): The code string to analyze.
-
-    Returns:
-        str: A dummy analysis report.
-    """
-    if not code:
-        return "Please provide code to analyze."
-    # Placeholder logic for code analysis
-    report = f"Analysis Report for provided code:\n\nLength of code: {len(code)} characters\n\n(Detailed analysis would go here)"
-    return report
-
-
-# Function to create a code score
-def create_code_score(code: str) -> str:
-    """
-    Placeholder function to generate a code score.
-
-    Args:
-        code (str): The code string to score.
-
-    Returns:
-        str: A dummy code score.
-    """
-    if not code:
-        return "Please provide code to score."
-    # Placeholder logic for code scoring
-    score = f"Code Score for provided code:\n\nSimulated score: {len(code) % 10}/10\n\n(Scoring logic would go here)"
-    return score
 
 
 # Create Gradio interfaces for code analysis
