@@ -18,7 +18,7 @@ analysis_report_demo = gr.Interface(
 code_score_demo = gr.Interface(
     fn=create_code_score,
     inputs=gr.Textbox(label="Enter Code Here", lines=20),
-    outputs=gr.Textbox(label="Code Score"),
+    outputs=gr.JSON(label="Code Score"),
     description="Generate a basic code score.",
 )
 
