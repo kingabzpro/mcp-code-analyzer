@@ -114,7 +114,7 @@ def analyze_code_anthropic(code: str) -> dict:
             system=SYSTEM_MESSAGES["anthropic"],
             tools=tools,
             tool_choice={"type": "tool", "name": "code_scores"},
-            max_tokens=64,
+            max_tokens=130,
             temperature=0,
         )
 
